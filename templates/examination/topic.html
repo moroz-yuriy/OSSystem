@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {{ topic.text }}
+    <a href="{% url 'question' question_id=question.id %}">Start</a>
+{% endblock %}

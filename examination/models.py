@@ -1,6 +1,7 @@
-from django.conf import settings
+from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
+
 
 
 class Topic(models.Model):
@@ -32,7 +33,7 @@ class Answer(models.Model):
 
 
 class Result(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     topic = models.ForeignKey(Topic, on_delete=models.CASCADE)
-    good = models.IntegerField()
-    bad = models.IntegerField()
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    answer = models.ForeignKey(Answer, on_delete=models.CASCADE)
