@@ -15,16 +15,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
-from django.contrib.auth.forms import UserCreationForm
-from django.urls import path
-from django.views.generic.edit import CreateView
+from django.urls import path, include
 
 from examination import views
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('topic/<int:topic_id>/', views.topic, name='topic'),
-    path('question/<int:question_id>/', views.question, name='question'),
+    path('examination/', include('examination.urls')),
     path('signup/', views.signup, name='signup'),
     path('login/',
          auth_views.LoginView.as_view(

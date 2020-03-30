@@ -6,8 +6,10 @@ from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
-from .forms import QuestionsForm
+from .decorators import is_finish_topic, next_question
+from .forms import AnswerForm
 from .models import Topic, Question, Result
+from .utils import get_result
 
 
 def index(request):
@@ -38,17 +40,31 @@ def topic(request, topic_id):
 
 
 @login_required(login_url='/login')
+@next_question
 def question(request, question_id):
     try:
         question = Question.objects.get(pk=question_id)
 
         if request.method == 'POST':
-            form = QuestionsForm(question, request.POST)
+            form = AnswerForm(question, request.POST)
             if form.is_valid():
-                Result.objects.create(user=request.user, )
-                return HttpResponseRedirect(reverse('question', kwargs={'question_id': question.id + 1}))
+                answer = form.cleaned_data['answer']
+                Result.objects.create(user=request.user, topic=question.topic, question=question, answer=answer)
+                return HttpResponseRedirect(reverse('question', kwargs={'question_id': question.id}))
 
-        form = QuestionsForm(question)
+        form = AnswerForm(question)
         return render(request, 'examination/question.html', {'question': question, 'form': form})
     except ObjectDoesNotExist:
         raise Http404
+
+
+@login_required(login_url='/login')
+@is_finish_topic
+def result(request, topic_id):
+    try:
+        topic = Topic.objects.get(pk=topic_id)
+        user_result = get_result(Result.objects.filter(user=request.user, topic=topic).all())
+        return render(request, 'examination/result.html', {'user_result': user_result})
+    except ObjectDoesNotExist:
+        raise Http404
+
