@@ -9,7 +9,7 @@ from django.urls import reverse
 from .decorators import is_finish_topic, next_question
 from .forms import AnswerForm
 from .models import Topic, Question, Result
-from .utils import get_result
+from .utils import get_result, get_next_question
 
 
 def index(request):
@@ -50,7 +50,8 @@ def logout_view(request):
 
 
 @login_required(login_url='/login')
-def topic(request, topic_id):
+@is_finish_topic
+def topic_view(request, topic_id):
     topic = Topic.objects.get(pk=topic_id)
     question = topic.question_set.first()
     return render(request, 'examination/topic.html', {'topic': topic, 'question': question})
@@ -58,7 +59,7 @@ def topic(request, topic_id):
 
 @login_required(login_url='/login')
 @next_question
-def question(request, question_id):
+def question_view(request, question_id):
     try:
         question = Question.objects.get(pk=question_id)
 
@@ -77,7 +78,7 @@ def question(request, question_id):
 
 @login_required(login_url='/login')
 @is_finish_topic
-def result(request, topic_id):
+def result_view(request, topic_id):
     try:
         topic = Topic.objects.get(pk=topic_id)
         user_result = get_result(Result.objects.filter(user=request.user, topic=topic).all())
