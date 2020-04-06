@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render, redirect
@@ -18,15 +18,19 @@ def index(request):
 
 
 def login_view(request):
-    username = request.POST['username']
-    password = request.POST['password']
-    user = authenticate(request, username=username, password=password)
-    if user is not None:
-        login(request, user)
-        return redirect('/')
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('/')
+        else:
+            # Return an 'invalid login' error message.
+            return redirect('registration/login_error.html', message='Login error, try')
     else:
-        # Return an 'invalid login' error message.
-        return redirect('registration/login_error.html', message='Login error, try')
+        form = AuthenticationForm()
+    return render(request, 'registration/login.html', {'form': form})
 
 
 def signup_view(request):

@@ -2,6 +2,8 @@
 
 {% block content %}
     {% for topic in topics %}
-        <a href="{% url 'topic' topic_id=topic.id %}">{{ topic }}</a>
+        <div class="row">
+            <a href="{% url 'topic' topic_id=topic.id %}" class="btn btn-primary">{{ topic }}</a>
+        </div>
     {% endfor %}
 {% endblock %}

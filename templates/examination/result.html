@@ -1,7 +1,19 @@
 {% extends "base.html" %}
 
 {% block content %}
-    Good {{ user_result.good }}<br>
-    Bad {{ user_result.bad }}<br>
-    Percentage {{ user_result.percentage }}<br>
+    <div>
+        Good <span class="badge badge-success">{{ user_result.good }}</span>
+    </div>
+    <div>
+        Bad <span class="badge badge-danger">{{ user_result.bad }}</span>
+    </div>
+    <div>
+        Percentage of correct answers
+        <div class="progress">
+            <div class="progress-bar" role="progressbar" style="width: 25%;"
+                 aria-valuenow="{{ user_result.percentage }}" aria-valuemin="0"
+                 aria-valuemax="100">{{ user_result.percentage }}%
+            </div>
+        </div>
+    </div>
 {% endblock %}
