@@ -1,4 +1,4 @@
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ObjectDoesNotExist
@@ -17,7 +17,19 @@ def index(request):
     return render(request, 'index.html', {'topics': topics})
 
 
-def signup(request):
+def login_view(request):
+    username = request.POST['username']
+    password = request.POST['password']
+    user = authenticate(request, username=username, password=password)
+    if user is not None:
+        login(request, user)
+        return redirect('/')
+    else:
+        # Return an 'invalid login' error message.
+        return redirect('registration/login_error.html', message='Login error, try')
+
+
+def signup_view(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
@@ -30,6 +42,11 @@ def signup(request):
     else:
         form = UserCreationForm()
     return render(request, 'registration/register.html', {'form': form})
+
+
+def logout_view(request):
+    logout(request)
+    return HttpResponseRedirect(reverse('index'))
 
 
 @login_required(login_url='/login')
@@ -67,4 +84,3 @@ def result(request, topic_id):
         return render(request, 'examination/result.html', {'user_result': user_result})
     except ObjectDoesNotExist:
         raise Http404
-

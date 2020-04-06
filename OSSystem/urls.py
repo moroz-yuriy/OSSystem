@@ -22,10 +22,11 @@ from examination import views
 urlpatterns = [
     path('', views.index, name='index'),
     path('examination/', include('examination.urls')),
-    path('signup/', views.signup, name='signup'),
+    path('signup/', views.signup_view, name='signup'),
     path('login/',
          auth_views.LoginView.as_view(
              redirect_authenticated_user=True,
-             success_url='/'), name='login'),
+             success_url=''), name='login'),
+    path('logout/', views.logout_view, name='logout'),
     path('admin/', admin.site.urls),
 ]
